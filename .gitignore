@@ -1,0 +1,18 @@
+# MATLAB
+*.asv
+*.m~
+*.mat
+*.mex*
+slprj/
+codegen/
+resources/project/
+
+# Python (future port)
+__pycache__/
+*.pyc
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

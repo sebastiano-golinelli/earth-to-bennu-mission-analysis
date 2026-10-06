@@ -94,6 +94,10 @@ runtests('tests')    % 15 tests, about 35 s
 | `TestManeuvers` | Bitangent transfer against the Hohmann formula; for 300 random plane and periapsis changes, the burn point lies on both orbits and the impulse equals the velocity difference; continuity of the transfer with the plane change inside the arc |
 | `TestMission` | Regression values; agreement of the optimizers; the optimal transfer propagated numerically reaches Bennu (error < 1 km); the escape asymptote recomputed from the post-burn state matches the required excess velocity (angle < 10⁻⁶ rad) |
 
+## Python version
+
+The whole analysis is also available in Python (NumPy, SciPy, Matplotlib) in [`python/`](python). It is checked against the MATLAB results by its own test suite: the deterministic quantities agree to machine precision (relative differences below 10⁻¹³) and the optimizers converge to the same optimum within 10⁻¹² km/s. The vectorized grid search evaluates the 72,000 transfers in 0.07 s, against 6.1 s for the MATLAB loop. See [`python/README.md`](python/README.md) for the comparison tables and the porting notes.
+
 ## Model assumptions and limitations
 
 - Impulsive maneuvers, two-body dynamics and patched conics.
@@ -134,6 +138,7 @@ src/scenario3/             escape and capture with patched conics
 src/plotting/              figures
 src/runMission.m           runs the three phases in sequence
 tests/                     automated tests (matlab.unittest)
+python/                    Python version, with its own tests and README
 ```
 
 ## Data sources

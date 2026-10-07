@@ -1,0 +1,21 @@
+name: MATLAB tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    # MathWorks provides MATLAB on GitHub-hosted runners for public repositories
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: matlab-actions/setup-matlab@v2
+        with:
+          release: latest
+          products: Optimization_Toolbox Global_Optimization_Toolbox
+      - uses: matlab-actions/run-tests@v2
+        with:
+          select-by-folder: tests

@@ -1,4 +1,7 @@
-# Earth → Bennu: preliminary mission analysis in MATLAB
+# Earth → Bennu: preliminary mission analysis in MATLAB and Python
+
+[![MATLAB tests](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/matlab-tests.yml/badge.svg)](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/matlab-tests.yml)
+[![Python tests](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/python-tests.yml/badge.svg)](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/python-tests.yml)
 
 Preliminary design of a mission from a geostationary transfer orbit (GTO) to the near-Earth asteroid **101955 Bennu**, the target of NASA's OSIRIS-REx. The analysis covers the three classic phases of an interplanetary mission with impulsive maneuvers and patched conics:
 
@@ -6,7 +9,7 @@ Preliminary design of a mission from a geostationary transfer orbit (GTO) to the
 2. **Heliocentric transfer**: two-impulse transfer Earth → Bennu, optimized with grid search, `fmincon`, `ga` and `MultiStart`.
 3. **Patched conics**: escape from Earth and capture at Bennu, including a full 3D (non-coplanar) escape.
 
-All values are computed from public data (JPL Small-Body Database, OSIRIS-REx results) and the main results are checked by an automated test suite.
+The analysis is written in MATLAB and fully ported to Python (NumPy, SciPy, Matplotlib): the two versions are cross-checked and agree to machine precision. All values are computed from public data (JPL Small-Body Database, OSIRIS-REx results), and both versions are verified by automated test suites that run on GitHub at every change.
 
 | Phase | Δv [km/s] | Duration |
 |---|---|---|
@@ -20,11 +23,12 @@ All values are computed from public data (JPL Small-Body Database, OSIRIS-REx re
 
 ## Highlights
 
+- **MATLAB → Python port, cross-validated.** The Python version reproduces the MATLAB results to machine precision (relative differences below 10⁻¹³) and reaches the same optimum with SciPy's optimizers. Its vectorized grid search evaluates 72,000 transfers in 0.07 s, against 6.1 s for the MATLAB loop. Details in [`python/README.md`](python/README.md).
 - **Parking orbit designed around the departure asymptote.** The parking orbit is not imposed. It is computed from the optimal heliocentric transfer: its plane contains the departure excess velocity and its periapsis is placed so that a tangential burn sends the spacecraft exactly along it. The general 3D escape solver, which knows nothing about this design, confirms it: the escape costs 0.6825 km/s, against 0.6824 km/s for the ideal coplanar estimate.
 - **Launch window study.** The launch time sets the orientation (RAAN) of the GTO. Sweeping it changes the cost of the geocentric phase from **1.75 to 9.33 km/s**, a much larger effect than the choice of maneuver strategy.
 - **Optimizer comparison on a multimodal problem.** 59 distinct local minima are found. `ga` with typical settings reaches the global optimum with only 1 seed out of 5: the other runs stop in local minima, two of them on a long-arc transfer with 393 days of flight. A local refinement with `fmincon` and a `MultiStart` search both recover the optimum reliably.
 - **Model validity at a tiny body.** Bennu's sphere of influence has a radius of only **2.84 km** and its gravity changes the arrival cost by less than 0.2 m/s. The "capture" is in practice a rendezvous, and the code quantifies when the two-body model stops being reliable (solar radiation pressure reaches 10% of Bennu's gravity at about 2.2 km).
-- **Verification.** 15 automated tests, including checks independent of the formulas under test: numerical propagation of the transfer, geometric continuity of every maneuver, and the escape asymptote recomputed from the post-burn state.
+- **Verification.** 15 MATLAB and 16 Python automated tests, run on GitHub at every change. They include checks independent of the formulas under test: numerical propagation of the transfer, geometric continuity of every maneuver, the escape asymptote recomputed from the post-burn state, and the comparison between the two languages.
 
 ## Results
 
@@ -88,6 +92,8 @@ The arrival burn therefore equals the excess velocity (3.223 km/s) to within 0.2
 runtests('tests')    % 15 tests, about 35 s
 ```
 
+The MATLAB and Python test suites run automatically on GitHub Actions at every push (badges at the top of this page).
+
 | Test class | What it checks |
 |---|---|
 | `TestOrbitalMechanics` | Keplerian ↔ Cartesian round trip on 200 random orbits, energy and angular momentum, time of flight against numerical integration |
@@ -96,7 +102,7 @@ runtests('tests')    % 15 tests, about 35 s
 
 ## Python version
 
-The whole analysis is also available in Python (NumPy, SciPy, Matplotlib) in [`python/`](python). It is checked against the MATLAB results by its own test suite: the deterministic quantities agree to machine precision (relative differences below 10⁻¹³) and the optimizers converge to the same optimum within 10⁻¹² km/s. The vectorized grid search evaluates the 72,000 transfers in 0.07 s, against 6.1 s for the MATLAB loop. See [`python/README.md`](python/README.md) for the comparison tables and the porting notes.
+The Python version is in [`python/`](python). Its test suite compares it with results exported from MATLAB: the deterministic quantities agree to machine precision and the optimizers converge to the same optimum within 10⁻¹² km/s. See [`python/README.md`](python/README.md) for the comparison tables, the porting notes and how to run it.
 
 ## Model assumptions and limitations
 
@@ -110,10 +116,15 @@ The whole analysis is also available in Python (NumPy, SciPy, Matplotlib) in [`p
 
 Requirements: MATLAB R2022a or later and the Optimization Toolbox. The Global Optimization Toolbox (`ga`, `MultiStart`) is optional: without it those steps are skipped. Developed and tested on MATLAB R2026a.
 
+Download or clone the repository, open MATLAB, make the repository folder the current folder, then run:
+
 ```matlab
+cd path/to/earth-to-bennu-mission-analysis   % the folder that contains main.m
 main              % runs the mission, prints the results and draws the figures (about 30 s)
 runtests('tests') % runs the test suite
 ```
+
+For the Python version see [`python/README.md`](python/README.md).
 
 All data and options are in `config/missionConfig.m`, for example:
 

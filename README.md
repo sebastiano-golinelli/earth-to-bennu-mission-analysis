@@ -2,6 +2,7 @@
 
 [![MATLAB tests](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/matlab-tests.yml/badge.svg)](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/matlab-tests.yml)
 [![Python tests](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/python-tests.yml/badge.svg)](https://github.com/sebastiano-golinelli/earth-to-bennu-mission-analysis/actions/workflows/python-tests.yml)
+[![Open the web app](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bennu-mission-explorer.streamlit.app)
 
 Preliminary design of a mission from a geostationary transfer orbit (GTO) to the near-Earth asteroid **101955 Bennu**, the target of NASA's OSIRIS-REx. The analysis covers the three classic phases of an interplanetary mission with impulsive maneuvers and patched conics:
 
@@ -20,6 +21,8 @@ The analysis is written in MATLAB and fully ported to Python (NumPy, SciPy, Matp
 | **Total** | **5.660** | **≈ 123 days** |
 
 ![Best heliocentric transfer](figures/sc2_best_transfer.png)
+
+**Try it online:** the interactive [Earth → Bennu Mission Explorer](https://bennu-mission-explorer.streamlit.app) runs the same analysis in the browser, no installation needed.
 
 ## Highlights
 
@@ -106,7 +109,7 @@ The Python version is in [`python/`](python). Its test suite compares it with re
 
 ## Interactive web app
 
-[`app/`](app) contains a Streamlit web app built on the Python package, the **Earth → Bennu Mission Explorer**:
+[`app/`](app) contains a Streamlit web app built on the Python package, the **[Earth → Bennu Mission Explorer](https://bennu-mission-explorer.streamlit.app)**:
 
 - **Optimal trajectory**: the cheapest transfer in an interactive 3D view (coloured by days since departure), the Δv map over departure and arrival positions, and the cost versus time of flight trade-off.
 - **Design your own**: sliders for the departure point, the arrival point and the orientation of the transfer ellipse, with the cost compared to the optimum or the reason the transfer is not feasible.

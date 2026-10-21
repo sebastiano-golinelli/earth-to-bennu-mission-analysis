@@ -28,7 +28,7 @@ The analysis is written in MATLAB and fully ported to Python (NumPy, SciPy, Matp
 - **Launch window study.** The launch time sets the orientation (RAAN) of the GTO. Sweeping it changes the cost of the geocentric phase from **1.75 to 9.33 km/s**, a much larger effect than the choice of maneuver strategy.
 - **Optimizer comparison on a multimodal problem.** 59 distinct local minima are found. `ga` with typical settings reaches the global optimum with only 1 seed out of 5: the other runs stop in local minima, two of them on a long-arc transfer with 393 days of flight. A local refinement with `fmincon` and a `MultiStart` search both recover the optimum reliably.
 - **Model validity at a tiny body.** Bennu's sphere of influence has a radius of only **2.84 km** and its gravity changes the arrival cost by less than 0.2 m/s. The "capture" is in practice a rendezvous, and the code quantifies when the two-body model stops being reliable (solar radiation pressure reaches 10% of Bennu's gravity at about 2.2 km).
-- **Verification.** 15 MATLAB and 16 Python automated tests, run on GitHub at every change. They include checks independent of the formulas under test: numerical propagation of the transfer, geometric continuity of every maneuver, the escape asymptote recomputed from the post-burn state, and the comparison between the two languages.
+- **Verification.** 15 MATLAB and 16 Python automated tests (plus 6 for the web app), run on GitHub at every change. They include checks independent of the formulas under test: numerical propagation of the transfer, geometric continuity of every maneuver, the escape asymptote recomputed from the post-burn state, and the comparison between the two languages.
 
 ## Results
 
@@ -108,10 +108,12 @@ The Python version is in [`python/`](python). Its test suite compares it with re
 
 [`app/`](app) contains a Streamlit web app built on the Python package, the **Earth → Bennu Mission Explorer**:
 
-- **Optimal transfer**: the cheapest transfer in an interactive 3D view, with the Δv map over departure and arrival positions and the cost versus time of flight trade-off.
-- **Design it yourself**: sliders for the departure point, the arrival point and the orientation of the transfer ellipse, with the cost compared to the optimum or the reason the transfer is not feasible.
-- **Full mission budget**: launch orbit, escape, cruise and capture chained together, in about 5 seconds.
-- Every setting can be changed: target orbit, minimum distance from the Sun, long arcs, a penalty on flight time.
+- **Optimal trajectory**: the cheapest transfer in an interactive 3D view (coloured by days since departure), the Δv map over departure and arrival positions, and the cost versus time of flight trade-off.
+- **Design your own**: sliders for the departure point, the arrival point and the orientation of the transfer ellipse, with the cost compared to the optimum or the reason the transfer is not feasible.
+- **Mission budget**: launch orbit, escape, cruise and capture chained together, with the Δv budget and the launch window.
+- Every setting can be changed: target orbit, closest approach to the Sun, long arcs, a price on each day of flight.
+
+The computations live in [`app/explorer.py`](app/explorer.py), separate from the interface, and reuse the package unchanged. The transfer search refines the 12 best distinct grid points: refining only the best one can stop in a local minimum when the target changes, and 6 tests in [`app/test_app.py`](app/test_app.py) check the page and compare the result with the package's full global search on several targets.
 
 To run it locally, from the repository root:
 
@@ -166,7 +168,8 @@ src/plotting/              figures
 src/runMission.m           runs the three phases in sequence
 tests/                     automated tests (matlab.unittest)
 python/                    Python version, with its own tests and README
-app/                       Streamlit web app (interactive explorer) and its smoke test
+app/                       Streamlit web app: interface, computations (explorer.py) and tests
+.streamlit/config.toml     theme of the web app
 ```
 
 ## Data sources

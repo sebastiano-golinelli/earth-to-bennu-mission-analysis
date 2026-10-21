@@ -104,6 +104,22 @@ The MATLAB and Python test suites run automatically on GitHub Actions at every p
 
 The Python version is in [`python/`](python). Its test suite compares it with results exported from MATLAB: the deterministic quantities agree to machine precision and the optimizers converge to the same optimum within 10⁻¹² km/s. See [`python/README.md`](python/README.md) for the comparison tables, the porting notes and how to run it.
 
+## Interactive web app
+
+[`app/`](app) contains a Streamlit web app built on the Python package, the **Earth → Bennu Mission Explorer**:
+
+- **Optimal transfer**: the cheapest transfer in an interactive 3D view, with the Δv map over departure and arrival positions and the cost versus time of flight trade-off.
+- **Design it yourself**: sliders for the departure point, the arrival point and the orientation of the transfer ellipse, with the cost compared to the optimum or the reason the transfer is not feasible.
+- **Full mission budget**: launch orbit, escape, cruise and capture chained together, in about 5 seconds.
+- Every setting can be changed: target orbit, minimum distance from the Sun, long arcs, a penalty on flight time.
+
+To run it locally, from the repository root:
+
+```bash
+pip install -r app/requirements.txt
+streamlit run app/streamlit_app.py
+```
+
 ## Model assumptions and limitations
 
 - Impulsive maneuvers, two-body dynamics and patched conics.
@@ -150,6 +166,7 @@ src/plotting/              figures
 src/runMission.m           runs the three phases in sequence
 tests/                     automated tests (matlab.unittest)
 python/                    Python version, with its own tests and README
+app/                       Streamlit web app (interactive explorer) and its smoke test
 ```
 
 ## Data sources
